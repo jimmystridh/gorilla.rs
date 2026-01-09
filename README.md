@@ -8,18 +8,9 @@ Two gorillas stand atop buildings in a city skyline, taking turns hurling explos
 
 **[Play in your browser](https://jimmystridh.github.io/gorilla.rs/)** (WebAssembly)
 
-## Screenshots
+## Screenshot
 
-```
-     _____                 _ _ _
-    |  __ \               (_) | |
-    | |  \/ ___  _ __ ___  _| | | __ _ ___
-    | | __ / _ \| '__/ _ \| | | |/ _` / __|
-    | |_\ \ (_) | | |  __/| | | | (_| \__ \
-     \____/\___/|_|  \___|_|_|_|\__,_|___/
-
-            QBasic Gorillas in Rust
-```
+![Gorilla.rs gameplay](assets/screenshot.png)
 
 ## Installation
 
@@ -87,8 +78,6 @@ python3 -m http.server 8000
 ## Original Game
 
 This is a port of `GORILLA.BAS`, which shipped with MS-DOS 5.0 and QBasic in 1991. The original was created by IBM Corporation and became one of the most iconic games of the early PC era.
-
-The original source code (`gorilla.bas`) is included in this repository for reference.
 
 ## Technical Details
 
