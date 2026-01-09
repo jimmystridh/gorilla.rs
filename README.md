@@ -8,18 +8,9 @@ Two gorillas stand atop buildings in a city skyline, taking turns hurling explos
 
 **[Play in your browser](https://jimmystridh.github.io/gorilla.rs/)** (WebAssembly)
 
-## Screenshots
+## Screenshot
 
-```
-     _____                 _ _ _
-    |  __ \               (_) | |
-    | |  \/ ___  _ __ ___  _| | | __ _ ___
-    | | __ / _ \| '__/ _ \| | | |/ _` / __|
-    | |_\ \ (_) | | |  __/| | | | (_| \__ \
-     \____/\___/|_|  \___|_|_|_|\__,_|___/
-
-            QBasic Gorillas in Rust
-```
+![Gorilla.rs gameplay](assets/screenshot.png)
 
 ## Installation
 
