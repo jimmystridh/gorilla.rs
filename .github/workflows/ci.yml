@@ -1,0 +1,236 @@
+name: CI and Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    name: Build (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Linux builds (using cross for graphics dependencies)
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: gorillas
+            asset_name: gorillas-linux-amd64
+            use_cross: true
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            artifact_name: gorillas
+            asset_name: gorillas-linux-arm64
+            use_cross: true
+          # Windows builds
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: gorillas.exe
+            asset_name: gorillas-windows-amd64
+            use_cross: false
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+            artifact_name: gorillas.exe
+            asset_name: gorillas-windows-arm64
+            use_cross: false
+          # macOS builds
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: gorillas
+            asset_name: gorillas-macos-amd64
+            use_cross: false
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: gorillas
+            asset_name: gorillas-macos-arm64
+            use_cross: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+          components: clippy
+
+      - name: Install Cross
+        if: matrix.use_cross == true
+        run: cargo install cross --git https://github.com/cross-rs/cross --locked
+
+      - name: Run Clippy
+        if: matrix.use_cross == false
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run tests
+        if: matrix.use_cross == false
+        run: cargo test --all --tests -- --nocapture
+
+      - name: Build
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [[ "${{ matrix.use_cross }}" == "true" ]]; then
+            cross build --release --target ${{ matrix.target }}
+          else
+            cargo build --release --target ${{ matrix.target }}
+          fi
+
+      - name: Build
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if ('${{ matrix.use_cross }}' -eq 'true') {
+            cross build --release --target '${{ matrix.target }}'
+          } else {
+            cargo build --release --target '${{ matrix.target }}'
+          }
+
+      - name: Package binary
+        shell: bash
+        run: |
+          echo "Packaging for OS: ${{ runner.os }}"
+          cd target/${{ matrix.target }}/release
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            7z a ../../../${{ matrix.asset_name }}.zip ${{ matrix.artifact_name }}
+            echo "ASSET_PATH=${{ matrix.asset_name }}.zip" >> $GITHUB_ENV
+            echo "Created ../../../${{ matrix.asset_name }}.zip"
+          else
+            tar -czf ../../../${{ matrix.asset_name }}.tar.gz ${{ matrix.artifact_name }}
+            echo "ASSET_PATH=${{ matrix.asset_name }}.tar.gz" >> $GITHUB_ENV
+            echo "Created ../../../${{ matrix.asset_name }}.tar.gz"
+          fi
+          ls ../../../
+          cd ../../../
+
+      - name: Upload Release Asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset_name }}
+          path: ${{ env.ASSET_PATH }}
+          if-no-files-found: error
+
+  build-wasm:
+    name: Build WebAssembly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Build WASM
+        run: cargo build --release --target wasm32-unknown-unknown
+
+      - name: Prepare web files
+        run: |
+          mkdir -p web
+          cp target/wasm32-unknown-unknown/release/gorillas.wasm web/
+          cp index.html web/
+
+      - name: Upload web artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gorillas-web
+          path: web/
+          if-no-files-found: error
+
+      - name: Upload Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build-wasm
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  create_release:
+    name: Create Release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [build, build-wasm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Determine next version
+        id: determine_version
+        run: |
+          LATEST_TAG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/latest" | jq -r .tag_name)
+
+          BASE_VERSION=$(grep '^version = ' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+          NEXT_VERSION=""
+
+          if [[ -z "$LATEST_TAG" || "$LATEST_TAG" == "null" ]]; then
+            echo "No previous release tag found. Using base version from Cargo.toml: $BASE_VERSION"
+            NEXT_VERSION="$BASE_VERSION"
+          elif [[ "$LATEST_TAG" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            MAJOR=${BASH_REMATCH[1]}
+            MINOR=${BASH_REMATCH[2]}
+            PATCH=${BASH_REMATCH[3]}
+
+            NEXT_PATCH=$((PATCH + 1))
+            NEXT_VERSION="${MAJOR}.${MINOR}.${NEXT_PATCH}"
+            echo "Latest tag: $LATEST_TAG, Next version: $NEXT_VERSION"
+          else
+            echo "Warning: Latest tag '$LATEST_TAG' doesn't match vX.Y.Z format. Using base version: $BASE_VERSION"
+            NEXT_VERSION="$BASE_VERSION"
+          fi
+
+          echo "new_version=${NEXT_VERSION}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Download all release assets
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Package web build
+        run: |
+          cd artifacts/gorillas-web
+          zip -r ../gorillas-web.zip .
+          cd ..
+          rm -rf gorillas-web
+          mkdir gorillas-web
+          mv gorillas-web.zip gorillas-web/
+
+      - name: List downloaded files (for debugging)
+        run: |
+          echo "Listing downloaded artifacts:"
+          ls -R artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.determine_version.outputs.new_version }}
+          name: Release v${{ steps.determine_version.outputs.new_version }}
+          files: artifacts/*/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
