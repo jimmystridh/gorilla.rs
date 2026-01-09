@@ -595,7 +595,7 @@ fn plot_shot(state: &mut GameState, shot_state: &mut ShotState, player_num: usiz
     let start_y_pos = start_y - adjust - 3.0;
 
     shot_state.x = start_x_pos + (init_x_vel * shot_state.t) + (0.5 * (state.wind as f32 / 5.0) * shot_state.t * shot_state.t);
-    shot_state.y = start_y_pos + ((-1.0 * (init_y_vel * shot_state.t)) + (0.5 * state.gravity * shot_state.t * shot_state.t)) * (VIRTUAL_HEIGHT / 350.0);
+    shot_state.y = start_y_pos + (-(init_y_vel * shot_state.t) + (0.5 * state.gravity * shot_state.t * shot_state.t)) * (VIRTUAL_HEIGHT / 350.0);
 
     if shot_state.x >= VIRTUAL_WIDTH - 10.0 || shot_state.x <= 3.0 || shot_state.y >= VIRTUAL_HEIGHT - 3.0 {
         shot_state.on_screen = false;
@@ -794,10 +794,8 @@ async fn main() {
                 }
 
                 while let Some(c) = get_char_pressed() {
-                    if c.is_alphanumeric() || c == '.' || c == ' ' {
-                        if input_buffer.len() < 20 {
-                            input_buffer.push(c);
-                        }
+                    if (c.is_alphanumeric() || c == '.' || c == ' ') && input_buffer.len() < 20 {
+                        input_buffer.push(c);
                     }
                 }
             }
