@@ -188,18 +188,35 @@ fn draw_scaled_circle(x: f32, y: f32, r: f32, color: Color) {
 fn draw_scaled_line(x1: f32, y1: f32, x2: f32, y2: f32, thickness: f32, color: Color) {
     let (scale, ox, oy) = get_scale();
     draw_line(
-        ox + x1 * scale, oy + y1 * scale,
-        ox + x2 * scale, oy + y2 * scale,
-        thickness * scale, color
+        ox + x1 * scale,
+        oy + y1 * scale,
+        ox + x2 * scale,
+        oy + y2 * scale,
+        thickness * scale,
+        color,
     );
 }
 
 fn draw_scaled_text(text: &str, x: f32, y: f32, font_size: f32, color: Color) {
     let (scale, ox, oy) = get_scale();
-    draw_text(text, ox + x * scale, oy + y * scale, font_size * scale, color);
+    draw_text(
+        text,
+        ox + x * scale,
+        oy + y * scale,
+        font_size * scale,
+        color,
+    );
 }
 
-fn draw_scaled_arc(cx: f32, cy: f32, radius: f32, thickness: f32, start_angle: f32, sweep: f32, color: Color) {
+fn draw_scaled_arc(
+    cx: f32,
+    cy: f32,
+    radius: f32,
+    thickness: f32,
+    start_angle: f32,
+    sweep: f32,
+    color: Color,
+) {
     let (scale, ox, oy) = get_scale();
     let steps = 16;
     for i in 0..steps {
@@ -274,27 +291,99 @@ fn draw_gorilla(x: f32, y: f32, arms: i32) {
 
     for i in 0..5 {
         let offset = i as f32;
-        draw_scaled_arc(x + offset, y + 25.0, 10.0, 1.0, 3.0 * PI / 4.0, 9.0 * PI / 8.0 - 3.0 * PI / 4.0, OBJECT_COLOR);
-        draw_scaled_arc(x - 6.0 + offset, y + 25.0, 10.0, 1.0, 15.0 * PI / 8.0, 2.0 * PI + PI / 4.0 - 15.0 * PI / 8.0, OBJECT_COLOR);
+        draw_scaled_arc(
+            x + offset,
+            y + 25.0,
+            10.0,
+            1.0,
+            3.0 * PI / 4.0,
+            9.0 * PI / 8.0 - 3.0 * PI / 4.0,
+            OBJECT_COLOR,
+        );
+        draw_scaled_arc(
+            x - 6.0 + offset,
+            y + 25.0,
+            10.0,
+            1.0,
+            15.0 * PI / 8.0,
+            2.0 * PI + PI / 4.0 - 15.0 * PI / 8.0,
+            OBJECT_COLOR,
+        );
     }
 
-    draw_scaled_arc(x - 5.0, y + 10.0, 5.0, 1.0, 3.0 * PI / 2.0, 2.0 * PI - 3.0 * PI / 2.0, BLACK);
+    draw_scaled_arc(
+        x - 5.0,
+        y + 10.0,
+        5.0,
+        1.0,
+        3.0 * PI / 2.0,
+        2.0 * PI - 3.0 * PI / 2.0,
+        BLACK,
+    );
     draw_scaled_arc(x + 5.0, y + 10.0, 5.0, 1.0, PI, 3.0 * PI / 2.0 - PI, BLACK);
 
     for i in -5..0 {
         let offset = i as f32;
         match arms {
             1 => {
-                draw_scaled_arc(x + offset, y + 14.0, 9.0, 1.0, 3.0 * PI / 4.0, 5.0 * PI / 4.0 - 3.0 * PI / 4.0, OBJECT_COLOR);
-                draw_scaled_arc(x + 5.0 + offset, y + 4.0, 9.0, 1.0, 7.0 * PI / 4.0, 2.0 * PI + PI / 4.0 - 7.0 * PI / 4.0, OBJECT_COLOR);
+                draw_scaled_arc(
+                    x + offset,
+                    y + 14.0,
+                    9.0,
+                    1.0,
+                    3.0 * PI / 4.0,
+                    5.0 * PI / 4.0 - 3.0 * PI / 4.0,
+                    OBJECT_COLOR,
+                );
+                draw_scaled_arc(
+                    x + 5.0 + offset,
+                    y + 4.0,
+                    9.0,
+                    1.0,
+                    7.0 * PI / 4.0,
+                    2.0 * PI + PI / 4.0 - 7.0 * PI / 4.0,
+                    OBJECT_COLOR,
+                );
             }
             2 => {
-                draw_scaled_arc(x + offset, y + 4.0, 9.0, 1.0, 3.0 * PI / 4.0, 5.0 * PI / 4.0 - 3.0 * PI / 4.0, OBJECT_COLOR);
-                draw_scaled_arc(x + 5.0 + offset, y + 14.0, 9.0, 1.0, 7.0 * PI / 4.0, 2.0 * PI + PI / 4.0 - 7.0 * PI / 4.0, OBJECT_COLOR);
+                draw_scaled_arc(
+                    x + offset,
+                    y + 4.0,
+                    9.0,
+                    1.0,
+                    3.0 * PI / 4.0,
+                    5.0 * PI / 4.0 - 3.0 * PI / 4.0,
+                    OBJECT_COLOR,
+                );
+                draw_scaled_arc(
+                    x + 5.0 + offset,
+                    y + 14.0,
+                    9.0,
+                    1.0,
+                    7.0 * PI / 4.0,
+                    2.0 * PI + PI / 4.0 - 7.0 * PI / 4.0,
+                    OBJECT_COLOR,
+                );
             }
             _ => {
-                draw_scaled_arc(x + offset, y + 14.0, 9.0, 1.0, 3.0 * PI / 4.0, 5.0 * PI / 4.0 - 3.0 * PI / 4.0, OBJECT_COLOR);
-                draw_scaled_arc(x + 5.0 + offset, y + 14.0, 9.0, 1.0, 7.0 * PI / 4.0, 2.0 * PI + PI / 4.0 - 7.0 * PI / 4.0, OBJECT_COLOR);
+                draw_scaled_arc(
+                    x + offset,
+                    y + 14.0,
+                    9.0,
+                    1.0,
+                    3.0 * PI / 4.0,
+                    5.0 * PI / 4.0 - 3.0 * PI / 4.0,
+                    OBJECT_COLOR,
+                );
+                draw_scaled_arc(
+                    x + 5.0 + offset,
+                    y + 14.0,
+                    9.0,
+                    1.0,
+                    7.0 * PI / 4.0,
+                    2.0 * PI + PI / 4.0 - 7.0 * PI / 4.0,
+                    OBJECT_COLOR,
+                );
             }
         }
     }
@@ -378,7 +467,11 @@ fn generate_cityscape(state: &mut GameState) {
         while c < x + b_width - 3.0 {
             let mut i = b_height - 3.0;
             while i >= 7.0 {
-                let win_color = if fn_ran(4) == 1 { DARKGRAY } else { WINDOW_COLOR };
+                let win_color = if fn_ran(4) == 1 {
+                    DARKGRAY
+                } else {
+                    WINDOW_COLOR
+                };
                 windows.push(Window {
                     x: c,
                     y: bottom_line - i,
@@ -420,30 +513,57 @@ fn generate_cityscape(state: &mut GameState) {
 
 fn draw_cityscape(state: &GameState) {
     for building in &state.buildings {
-        draw_scaled_rect(building.x - 1.0, building.y - 1.0, building.width + 2.0, building.height + 2.0, BACK_COLOR);
-        draw_scaled_rect(building.x, building.y, building.width, building.height, building.color);
+        draw_scaled_rect(
+            building.x - 1.0,
+            building.y - 1.0,
+            building.width + 2.0,
+            building.height + 2.0,
+            BACK_COLOR,
+        );
+        draw_scaled_rect(
+            building.x,
+            building.y,
+            building.width,
+            building.height,
+            building.color,
+        );
         for window in &building.windows {
-            draw_scaled_rect(window.x, window.y, window.width, window.height, window.color);
+            draw_scaled_rect(
+                window.x,
+                window.y,
+                window.width,
+                window.height,
+                window.color,
+            );
         }
     }
 
     if state.wind != 0 {
         let wind_line = (state.wind * 3 * 2) as f32;
         draw_scaled_line(
-            VIRTUAL_WIDTH / 2.0, VIRTUAL_HEIGHT - 5.0,
-            VIRTUAL_WIDTH / 2.0 + wind_line, VIRTUAL_HEIGHT - 5.0,
-            2.0, EXPLOSION_COLOR
+            VIRTUAL_WIDTH / 2.0,
+            VIRTUAL_HEIGHT - 5.0,
+            VIRTUAL_WIDTH / 2.0 + wind_line,
+            VIRTUAL_HEIGHT - 5.0,
+            2.0,
+            EXPLOSION_COLOR,
         );
         let arrow_dir: f32 = if state.wind > 0 { -4.0 } else { 4.0 };
         draw_scaled_line(
-            VIRTUAL_WIDTH / 2.0 + wind_line, VIRTUAL_HEIGHT - 5.0,
-            VIRTUAL_WIDTH / 2.0 + wind_line + arrow_dir, VIRTUAL_HEIGHT - 7.0,
-            2.0, EXPLOSION_COLOR
+            VIRTUAL_WIDTH / 2.0 + wind_line,
+            VIRTUAL_HEIGHT - 5.0,
+            VIRTUAL_WIDTH / 2.0 + wind_line + arrow_dir,
+            VIRTUAL_HEIGHT - 7.0,
+            2.0,
+            EXPLOSION_COLOR,
         );
         draw_scaled_line(
-            VIRTUAL_WIDTH / 2.0 + wind_line, VIRTUAL_HEIGHT - 5.0,
-            VIRTUAL_WIDTH / 2.0 + wind_line + arrow_dir, VIRTUAL_HEIGHT - 3.0,
-            2.0, EXPLOSION_COLOR
+            VIRTUAL_WIDTH / 2.0 + wind_line,
+            VIRTUAL_HEIGHT - 5.0,
+            VIRTUAL_WIDTH / 2.0 + wind_line + arrow_dir,
+            VIRTUAL_HEIGHT - 3.0,
+            2.0,
+            EXPLOSION_COLOR,
         );
     }
 }
@@ -500,12 +620,48 @@ fn draw_intro_screen(sparkle_offset: i32) {
     }
 
     draw_scaled_text("Q B a s i c    G O R I L L A S", 160.0, 56.0, 24.0, WHITE);
-    draw_scaled_text("Copyright (C) IBM Corporation 1991", 180.0, 84.0, 18.0, GRAY);
-    draw_scaled_text("Your mission is to hit your opponent with the exploding", 100.0, 112.0, 18.0, GRAY);
-    draw_scaled_text("banana by varying the angle and power of your throw, taking", 90.0, 126.0, 18.0, GRAY);
-    draw_scaled_text("into account wind speed, gravity, and the city skyline.", 100.0, 140.0, 18.0, GRAY);
-    draw_scaled_text("The wind speed is shown by a directional arrow at the bottom", 85.0, 154.0, 18.0, GRAY);
-    draw_scaled_text("of the playing field, its length relative to its strength.", 95.0, 168.0, 18.0, GRAY);
+    draw_scaled_text(
+        "Copyright (C) IBM Corporation 1991",
+        180.0,
+        84.0,
+        18.0,
+        GRAY,
+    );
+    draw_scaled_text(
+        "Your mission is to hit your opponent with the exploding",
+        100.0,
+        112.0,
+        18.0,
+        GRAY,
+    );
+    draw_scaled_text(
+        "banana by varying the angle and power of your throw, taking",
+        90.0,
+        126.0,
+        18.0,
+        GRAY,
+    );
+    draw_scaled_text(
+        "into account wind speed, gravity, and the city skyline.",
+        100.0,
+        140.0,
+        18.0,
+        GRAY,
+    );
+    draw_scaled_text(
+        "The wind speed is shown by a directional arrow at the bottom",
+        85.0,
+        154.0,
+        18.0,
+        GRAY,
+    );
+    draw_scaled_text(
+        "of the playing field, its length relative to its strength.",
+        95.0,
+        168.0,
+        18.0,
+        GRAY,
+    );
     draw_scaled_text("Press any key to continue", 220.0, 336.0, 18.0, GRAY);
 }
 
@@ -519,9 +675,19 @@ fn draw_input_screen(
 ) {
     clear_background(BLACK);
 
-    let cursor = if (get_time() * 2.0) as i32 % 2 == 0 { "_" } else { " " };
+    let cursor = if (get_time() * 2.0) as i32 % 2 == 0 {
+        "_"
+    } else {
+        " "
+    };
 
-    draw_scaled_text("Name of Player 1 (Default = 'Player 1'): ", 100.0, 112.0, 18.0, GRAY);
+    draw_scaled_text(
+        "Name of Player 1 (Default = 'Player 1'): ",
+        100.0,
+        112.0,
+        18.0,
+        GRAY,
+    );
     let p1_display = if current_field == InputField::Player1Name {
         format!("{}{}", input_buffer, cursor)
     } else {
@@ -529,7 +695,13 @@ fn draw_input_screen(
     };
     draw_scaled_text(&p1_display, 430.0, 112.0, 18.0, WHITE);
 
-    draw_scaled_text("Name of Player 2 (Default = 'Player 2'): ", 100.0, 140.0, 18.0, GRAY);
+    draw_scaled_text(
+        "Name of Player 2 (Default = 'Player 2'): ",
+        100.0,
+        140.0,
+        18.0,
+        GRAY,
+    );
     let p2_display = if current_field == InputField::Player2Name {
         format!("{}{}", input_buffer, cursor)
     } else {
@@ -537,7 +709,13 @@ fn draw_input_screen(
     };
     draw_scaled_text(&p2_display, 430.0, 140.0, 18.0, WHITE);
 
-    draw_scaled_text("Play to how many total points (Default = 3): ", 80.0, 168.0, 18.0, GRAY);
+    draw_scaled_text(
+        "Play to how many total points (Default = 3): ",
+        80.0,
+        168.0,
+        18.0,
+        GRAY,
+    );
     let games_display = if current_field == InputField::NumGames {
         format!("{}{}", input_buffer, cursor)
     } else {
@@ -545,7 +723,13 @@ fn draw_input_screen(
     };
     draw_scaled_text(&games_display, 450.0, 168.0, 18.0, WHITE);
 
-    draw_scaled_text("Gravity in Meters/Sec (Earth = 9.8): ", 110.0, 196.0, 18.0, GRAY);
+    draw_scaled_text(
+        "Gravity in Meters/Sec (Earth = 9.8): ",
+        110.0,
+        196.0,
+        18.0,
+        GRAY,
+    );
     let gravity_display = if current_field == InputField::Gravity {
         format!("{}{}", input_buffer, cursor)
     } else {
@@ -564,7 +748,11 @@ fn draw_gorilla_intro_screen() {
 
 fn draw_shot_input(shot_state: &ShotState, player_num: usize) {
     let locate_col = if player_num == 0 { 10.0 } else { 500.0 };
-    let cursor = if (get_time() * 2.0) as i32 % 2 == 0 { "_" } else { " " };
+    let cursor = if (get_time() * 2.0) as i32 % 2 == 0 {
+        "_"
+    } else {
+        " "
+    };
 
     draw_scaled_text("Angle:", locate_col, 28.0, 18.0, WHITE);
     let angle_display = if shot_state.phase == ShotPhase::InputAngle {
@@ -585,19 +773,36 @@ fn draw_shot_input(shot_state: &ShotState, player_num: usize) {
     }
 }
 
-fn plot_shot(state: &mut GameState, shot_state: &mut ShotState, player_num: usize, start_x: f32, start_y: f32) -> bool {
+fn plot_shot(
+    state: &mut GameState,
+    shot_state: &mut ShotState,
+    player_num: usize,
+    start_x: f32,
+    start_y: f32,
+) -> bool {
     let angle_rad = shot_state.angle / 180.0 * PI;
     let init_x_vel = angle_rad.cos() * shot_state.velocity;
     let init_y_vel = angle_rad.sin() * shot_state.velocity;
 
     let adjust = 4.0;
-    let start_x_pos = if player_num == 1 { start_x + 25.0 } else { start_x };
+    let start_x_pos = if player_num == 1 {
+        start_x + 25.0
+    } else {
+        start_x
+    };
     let start_y_pos = start_y - adjust - 3.0;
 
-    shot_state.x = start_x_pos + (init_x_vel * shot_state.t) + (0.5 * (state.wind as f32 / 5.0) * shot_state.t * shot_state.t);
-    shot_state.y = start_y_pos + (-(init_y_vel * shot_state.t) + (0.5 * state.gravity * shot_state.t * shot_state.t)) * (VIRTUAL_HEIGHT / 350.0);
+    shot_state.x = start_x_pos
+        + (init_x_vel * shot_state.t)
+        + (0.5 * (state.wind as f32 / 5.0) * shot_state.t * shot_state.t);
+    shot_state.y = start_y_pos
+        + (-(init_y_vel * shot_state.t) + (0.5 * state.gravity * shot_state.t * shot_state.t))
+            * (VIRTUAL_HEIGHT / 350.0);
 
-    if shot_state.x >= VIRTUAL_WIDTH - 10.0 || shot_state.x <= 3.0 || shot_state.y >= VIRTUAL_HEIGHT - 3.0 {
+    if shot_state.x >= VIRTUAL_WIDTH - 10.0
+        || shot_state.x <= 3.0
+        || shot_state.y >= VIRTUAL_HEIGHT - 3.0
+    {
         shot_state.on_screen = false;
         return true;
     }
@@ -606,8 +811,11 @@ fn plot_shot(state: &mut GameState, shot_state: &mut ShotState, player_num: usiz
         for i in 0..2 {
             let gx = state.gorilla_x[i];
             let gy = state.gorilla_y[i];
-            if shot_state.x >= gx - 5.0 && shot_state.x <= gx + 25.0 &&
-               shot_state.y >= gy - 5.0 && shot_state.y <= gy + 30.0 {
+            if shot_state.x >= gx - 5.0
+                && shot_state.x <= gx + 25.0
+                && shot_state.y >= gy - 5.0
+                && shot_state.y <= gy + 30.0
+            {
                 shot_state.impact = true;
                 shot_state.player_hit = Some(i);
                 return true;
@@ -666,9 +874,21 @@ fn draw_game_over(state: &GameState, sparkle_offset: i32) {
     draw_scaled_text("GAME OVER!", 270.0, 112.0, 24.0, WHITE);
     draw_scaled_text("Score:", 290.0, 140.0, 20.0, WHITE);
     draw_scaled_text(&state.player1_name, 200.0, 168.0, 18.0, WHITE);
-    draw_scaled_text(&format!("{}", state.total_wins[0]), 400.0, 168.0, 18.0, WHITE);
+    draw_scaled_text(
+        &format!("{}", state.total_wins[0]),
+        400.0,
+        168.0,
+        18.0,
+        WHITE,
+    );
     draw_scaled_text(&state.player2_name, 200.0, 196.0, 18.0, WHITE);
-    draw_scaled_text(&format!("{}", state.total_wins[1]), 400.0, 196.0, 18.0, WHITE);
+    draw_scaled_text(
+        &format!("{}", state.total_wins[1]),
+        400.0,
+        196.0,
+        18.0,
+        WHITE,
+    );
     draw_scaled_text("Press any key to continue", 220.0, 336.0, 18.0, GRAY);
 }
 
@@ -722,7 +942,12 @@ async fn main() {
         }
 
         // Cmd+Enter (Mac) or Ctrl+Enter to toggle fullscreen
-        if is_key_pressed(KeyCode::Enter) && (is_key_down(KeyCode::LeftSuper) || is_key_down(KeyCode::RightSuper) || is_key_down(KeyCode::LeftControl) || is_key_down(KeyCode::RightControl)) {
+        if is_key_pressed(KeyCode::Enter)
+            && (is_key_down(KeyCode::LeftSuper)
+                || is_key_down(KeyCode::RightSuper)
+                || is_key_down(KeyCode::LeftControl)
+                || is_key_down(KeyCode::RightControl))
+        {
             fullscreen = !fullscreen;
             set_fullscreen(fullscreen);
         }
@@ -749,46 +974,46 @@ async fn main() {
 
                 if let Some(key) = get_last_key_pressed() {
                     match key {
-                        KeyCode::Enter => {
-                            match current_input_field {
-                                InputField::Player1Name => {
-                                    player1_input = if input_buffer.is_empty() {
-                                        "Player 1".to_string()
-                                    } else {
-                                        input_buffer.chars().take(10).collect()
-                                    };
-                                    input_buffer.clear();
-                                    current_input_field = InputField::Player2Name;
-                                }
-                                InputField::Player2Name => {
-                                    player2_input = if input_buffer.is_empty() {
-                                        "Player 2".to_string()
-                                    } else {
-                                        input_buffer.chars().take(10).collect()
-                                    };
-                                    input_buffer.clear();
-                                    current_input_field = InputField::NumGames;
-                                }
-                                InputField::NumGames => {
-                                    games_input = input_buffer.clone();
-                                    let num: i32 = input_buffer.parse().unwrap_or(3);
-                                    state.num_games = if num > 0 { num } else { 3 };
-                                    input_buffer.clear();
-                                    current_input_field = InputField::Gravity;
-                                }
-                                InputField::Gravity => {
-                                    gravity_input = input_buffer.clone();
-                                    let grav: f32 = input_buffer.parse().unwrap_or(9.8);
-                                    state.gravity = if grav > 0.0 { grav } else { 9.8 };
-                                    state.player1_name = player1_input.clone();
-                                    state.player2_name = player2_input.clone();
-                                    phase = GamePhase::GorillaIntro;
-                                    current_input_field = InputField::ViewOrPlay;
-                                }
-                                _ => {}
+                        KeyCode::Enter => match current_input_field {
+                            InputField::Player1Name => {
+                                player1_input = if input_buffer.is_empty() {
+                                    "Player 1".to_string()
+                                } else {
+                                    input_buffer.chars().take(10).collect()
+                                };
+                                input_buffer.clear();
+                                current_input_field = InputField::Player2Name;
                             }
+                            InputField::Player2Name => {
+                                player2_input = if input_buffer.is_empty() {
+                                    "Player 2".to_string()
+                                } else {
+                                    input_buffer.chars().take(10).collect()
+                                };
+                                input_buffer.clear();
+                                current_input_field = InputField::NumGames;
+                            }
+                            InputField::NumGames => {
+                                games_input = input_buffer.clone();
+                                let num: i32 = input_buffer.parse().unwrap_or(3);
+                                state.num_games = if num > 0 { num } else { 3 };
+                                input_buffer.clear();
+                                current_input_field = InputField::Gravity;
+                            }
+                            InputField::Gravity => {
+                                gravity_input = input_buffer.clone();
+                                let grav: f32 = input_buffer.parse().unwrap_or(9.8);
+                                state.gravity = if grav > 0.0 { grav } else { 9.8 };
+                                state.player1_name = player1_input.clone();
+                                state.player2_name = player2_input.clone();
+                                phase = GamePhase::GorillaIntro;
+                                current_input_field = InputField::ViewOrPlay;
+                            }
+                            _ => {}
+                        },
+                        KeyCode::Backspace => {
+                            input_buffer.pop();
                         }
-                        KeyCode::Backspace => { input_buffer.pop(); }
                         _ => {}
                     }
                 }
@@ -832,9 +1057,21 @@ async fn main() {
 
                     let x = 278.0;
                     let y = 175.0;
-                    let arm_state = if intro_dance_frame % 2 == 0 { LEFT_UP } else { RIGHT_UP };
+                    let arm_state = if intro_dance_frame % 2 == 0 {
+                        LEFT_UP
+                    } else {
+                        RIGHT_UP
+                    };
                     draw_gorilla(x - 13.0, y, arm_state);
-                    draw_gorilla(x + 47.0, y, if arm_state == LEFT_UP { RIGHT_UP } else { LEFT_UP });
+                    draw_gorilla(
+                        x + 47.0,
+                        y,
+                        if arm_state == LEFT_UP {
+                            RIGHT_UP
+                        } else {
+                            LEFT_UP
+                        },
+                    );
 
                     if get_time() - intro_dance_timer > 0.3 {
                         intro_dance_frame += 1;
@@ -884,12 +1121,27 @@ async fn main() {
 
                 draw_scaled_text(&state.player1_name, 10.0, 14.0, 18.0, WHITE);
                 let (scale, _, _) = get_scale();
-                let p2_width = measure_text(&state.player2_name, None, (18.0 * scale) as u16, 1.0).width / scale;
-                draw_scaled_text(&state.player2_name, VIRTUAL_WIDTH - p2_width - 10.0, 14.0, 18.0, WHITE);
+                let p2_width = measure_text(&state.player2_name, None, (18.0 * scale) as u16, 1.0)
+                    .width
+                    / scale;
+                draw_scaled_text(
+                    &state.player2_name,
+                    VIRTUAL_WIDTH - p2_width - 10.0,
+                    14.0,
+                    18.0,
+                    WHITE,
+                );
 
                 let score_text = format!("{}>Score<{}", state.total_wins[0], state.total_wins[1]);
-                let score_width = measure_text(&score_text, None, (18.0 * scale) as u16, 1.0).width / scale;
-                draw_scaled_text(&score_text, (VIRTUAL_WIDTH - score_width) / 2.0, 330.0, 18.0, WHITE);
+                let score_width =
+                    measure_text(&score_text, None, (18.0 * scale) as u16, 1.0).width / scale;
+                draw_scaled_text(
+                    &score_text,
+                    (VIRTUAL_WIDTH - score_width) / 2.0,
+                    330.0,
+                    18.0,
+                    WHITE,
+                );
 
                 if showing_victory {
                     if get_time() - victory_timer > 0.2 {
@@ -920,13 +1172,16 @@ async fn main() {
                             if let Some(key) = get_last_key_pressed() {
                                 match key {
                                     KeyCode::Enter => {
-                                        shot_state.angle = shot_state.angle_input.parse().unwrap_or(45.0);
+                                        shot_state.angle =
+                                            shot_state.angle_input.parse().unwrap_or(45.0);
                                         if current_player == 1 {
                                             shot_state.angle = 180.0 - shot_state.angle;
                                         }
                                         shot_state.phase = ShotPhase::InputVelocity;
                                     }
-                                    KeyCode::Backspace => { shot_state.angle_input.pop(); }
+                                    KeyCode::Backspace => {
+                                        shot_state.angle_input.pop();
+                                    }
                                     _ => {}
                                 }
                             }
@@ -943,7 +1198,8 @@ async fn main() {
                             if let Some(key) = get_last_key_pressed() {
                                 match key {
                                     KeyCode::Enter => {
-                                        shot_state.velocity = shot_state.velocity_input.parse().unwrap_or(50.0);
+                                        shot_state.velocity =
+                                            shot_state.velocity_input.parse().unwrap_or(50.0);
                                         shot_state.phase = ShotPhase::Animating;
                                         shot_state.t = 0.0;
                                         shot_state.impact = false;
@@ -951,7 +1207,9 @@ async fn main() {
                                         shot_state.player_hit = None;
                                         state.sun_hit = false;
                                     }
-                                    KeyCode::Backspace => { shot_state.velocity_input.pop(); }
+                                    KeyCode::Backspace => {
+                                        shot_state.velocity_input.pop();
+                                    }
                                     _ => {}
                                 }
                             }
@@ -963,12 +1221,17 @@ async fn main() {
                             }
                         }
                         ShotPhase::Animating => {
-                            let arms = if current_player == 0 { LEFT_UP } else { RIGHT_UP };
+                            let arms = if current_player == 0 {
+                                LEFT_UP
+                            } else {
+                                RIGHT_UP
+                            };
                             let gx = state.gorilla_x[current_player];
                             let gy = state.gorilla_y[current_player];
                             draw_gorilla(gx, gy, arms);
 
-                            let done = plot_shot(&mut state, &mut shot_state, current_player, gx, gy);
+                            let done =
+                                plot_shot(&mut state, &mut shot_state, current_player, gx, gy);
 
                             if done {
                                 shot_state.phase = ShotPhase::Done;
@@ -1029,7 +1292,9 @@ async fn main() {
                             current_input_field = InputField::Player1Name;
                             state = GameState::new();
                         }
-                        KeyCode::N => { break; }
+                        KeyCode::N => {
+                            break;
+                        }
                         _ => {}
                     }
                 }
